@@ -10,6 +10,8 @@ def main():
     queues = os.getenv('RABBITMQ_CLOUWATCH_QUEUES', '').split(',')
     aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
     aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+    cloudwatch_namespace = os.getenv(
+        'RABBITMQ_CLOUWATCH_NAMESPACE', 'rabbitmq_cloudwatch')
 
     if not queues or not queues[0]:
         raise RabbitmqCloudwatchException('Queues may not be empty')
@@ -40,7 +42,7 @@ def main():
             print 'Queue {} currently has {} messages'.format(
                 queue, queue_messages)
 
-            cwc.put_metric_data('ogs/worker/', queue, queue_messages)
+            cwc.put_metric_data(cloudwatch_namespace, queue, queue_messages)
         else:
             raise RabbitmqCloudwatchException(
                 'Unable to fetch queue {} from url: {}. '
